@@ -3,7 +3,7 @@
 <div class="row">
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 		<h3>
-			<a href="{{URL::action('EditarGuiaController@index')}}"><button class="btn btn-info">Cancelar</button></a>
+			<a href="{{URL::action('CajaController@index')}}"><button class="btn btn-info">Cancelar</button></a>
 		</h3>
 		@if (count($errors)>0)
 			<div class="alert alert-danger">
@@ -16,7 +16,7 @@
 		@endif
 	</div>
 </div>
-<form method="POST" action="{{ url("editar_guia/recargo/{$cabecera->id_cabecera}") }}">
+<form method="POST" action="{{ url("caja/{$cabecera->id_cabecera}") }}">
 	@csrf
 	@method('PUT')
 	<div class="row">
