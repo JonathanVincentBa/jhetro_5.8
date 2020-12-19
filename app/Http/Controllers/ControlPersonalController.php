@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AsistenciaPersonalExport;
+use App\Exports\AsistenciaPersonalUnicoExport;
 
 class ControlPersonalController extends Controller
 {
@@ -26,67 +28,22 @@ class ControlPersonalController extends Controller
     }
     public function todosEmpleados(Request $request)
     {
-        //Reporte X Ciudad X Pagar
+        
+        //Reporte Asistencia de Personal
         $fecha_inicio = $request->get('fecha_inicio');
         $fecha_final  = $request->get('fecha_final');
 
-        //Obtener registros X Ciudad X Pagar
-
-        $usuarios=DB::select('SELECT users.name, acceso.ip_client, acceso.date, acceso.condicion
-                            FROM acceso
-                            INNER JOIN users
-                            ON users.id=acceso.id_user
-                            WHERE DATE(acceso.date) BETWEEN "'.$fecha_inicio.'" AND "'.$fecha_final.'"
-                            ORDER BY users.name, acceso.date asc');  
-        Excel::create('Reporte de asistencia del personal', function($excel) use($usuarios) 
-        {
-            $excel->sheet('Datos', function($sheet) use($usuarios) {
-                $sheet->row(1, [
-                    'Nombre de Usuario', 'Ip del computador', 'Fecha y hora', 'Condicion', 
-                ]);
-                $cont=2;
-                foreach ($usuarios as $usu) 
-                {
-                    $sheet->row($cont,[
-                        $usu->name, $usu->ip_client, $usu->date, $usu->condicion,
-                    ]);
-                    $cont++;
-                }
-            });
-        })->export('xls');
+        
+        return Excel::download(new AsistenciaPersonalExport($fecha_inicio,$fecha_final), 'Asistencia-Personal.xlsx');
     }
 
     public function porEmpleado(Request $request)
     {
-        //Reporte X Ciudad X Pagar
         $fecha_inicio = $request->get('fecha_inicio_1');
         $fecha_final  = $request->get('fecha_final_1');
         $nombre = $request->get('name');
-
-        //Obtener registros X Ciudad X Pagar
-
-        $usuarios=DB::select('SELECT users.name, acceso.ip_client, acceso.date, acceso.condicion
-                            FROM acceso
-                            INNER JOIN users
-                            ON users.id=acceso.id_user
-                            WHERE DATE(acceso.date) BETWEEN "'.$fecha_inicio.'" AND "'.$fecha_final.'"
-                            AND users.name = "'.$nombre.'"
-                            ORDER BY users.name, acceso.date asc');
-        Excel::create('Reporte de asistencia del personal', function($excel) use($usuarios) 
-        {
-            $excel->sheet('Datos', function($sheet) use($usuarios) {
-                $sheet->row(1, [
-                    'Nombre de Usuario', 'Ip del computador', 'Fecha y hora', 'Condicion', 
-                ]);
-                $cont=2;
-                foreach ($usuarios as $usu) 
-                {
-                    $sheet->row($cont,[
-                        $usu->name, $usu->ip_client, $usu->date, $usu->condicion,
-                    ]);
-                    $cont++;
-                }
-            });
-        })->export('xls');
+        
+        //dd($fecha_inicio,$fecha_final,$nombre);
+        return Excel::download(new AsistenciaPersonalUnicoExport($fecha_inicio,$fecha_final,$nombre), 'Asistencia-Personal-Unico.xlsx');
     }
 }

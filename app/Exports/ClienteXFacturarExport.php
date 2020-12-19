@@ -27,7 +27,7 @@ class ClienteXFacturarExport implements FromView
    
      public function view(): View
      {
-         $this->fecha_inicio=new DateTime($this->fecha_inicio);
+        $this->fecha_inicio=new DateTime($this->fecha_inicio);
         $this->fecha_inicio=$this->fecha_inicio->format('Y-m-d H:i:s');
         
         $this->fecha_final=new DateTime($this->fecha_final);
